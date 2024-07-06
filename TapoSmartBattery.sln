@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35013.160
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TapoSmartBattery", "TapoSmartBattery.csproj", "{15C112C6-9319-4153-80D1-471CA3B47453}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{15C112C6-9319-4153-80D1-471CA3B47453}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15C112C6-9319-4153-80D1-471CA3B47453}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15C112C6-9319-4153-80D1-471CA3B47453}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15C112C6-9319-4153-80D1-471CA3B47453}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D2243648-DCAD-454D-B0AC-6D7DAE51CDD6}
+	EndGlobalSection
+EndGlobal
