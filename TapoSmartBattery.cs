@@ -82,7 +82,7 @@ namespace TapoSmartBattery
 
         private void lnkHomepage_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            var ps = new System.Diagnostics.ProcessStartInfo("http://google.com")  // TODO replace with public github page
+            var ps = new System.Diagnostics.ProcessStartInfo("https://github.com/allthefurlongs/TapoSmartBattery")
             {
                 UseShellExecute = true,
                 Verb = "open"
