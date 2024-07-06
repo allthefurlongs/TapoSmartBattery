@@ -12,6 +12,8 @@ Once you have setup the plug in the Tapo app, go to the device settings and sele
 
 Select the plug model from the drop down, and enter the IP address, and your Tapo username and password. The software will connect directly to the plug on your local network, authenticate to it, and then turn it on or off  when the min/max charge percentage you have entered are reached.
 
+If you do not see a plug status (On or Off), you may have the wrong IP address, or a network error.
+
 ## Building from Source
 
 The project was originally built in Visual Studio 2022 against .NET 8.0, and uses the NuGet package [Smdn.TPSmartHomeDevices.Tapo](https://github.com/smdn/Smdn.TPSmartHomeDevices/) version 2.0.0.

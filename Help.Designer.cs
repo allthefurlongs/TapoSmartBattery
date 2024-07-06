@@ -35,6 +35,7 @@
             lblHelp4 = new Label();
             lblHelp5 = new Label();
             lblHelp6 = new Label();
+            lblHelp7 = new Label();
             SuspendLayout();
             // 
             // lblHelp3
@@ -101,11 +102,22 @@
             lblHelp6.TabIndex = 5;
             lblHelp6.Text = resources.GetString("lblHelp6.Text");
             // 
+            // lblHelp7
+            // 
+            lblHelp7.AutoSize = true;
+            lblHelp7.Location = new Point(12, 375);
+            lblHelp7.MaximumSize = new Size(751, 0);
+            lblHelp7.Name = "lblHelp7";
+            lblHelp7.Size = new Size(522, 15);
+            lblHelp7.TabIndex = 6;
+            lblHelp7.Text = "If you do not see a plug status (On or Off), you may have the wrong IP address, or a network error.";
+            // 
             // Help
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 378);
+            ClientSize = new Size(800, 418);
+            Controls.Add(lblHelp7);
             Controls.Add(lblHelp6);
             Controls.Add(lblHelp5);
             Controls.Add(lblHelp4);
@@ -128,5 +140,6 @@
         private Label lblHelp4;
         private Label lblHelp5;
         private Label lblHelp6;
+        private Label lblHelp7;
     }
 }

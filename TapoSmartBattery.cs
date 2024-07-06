@@ -139,14 +139,30 @@ namespace TapoSmartBattery
         {
             plugManager.DisablePlugControl();
             chkPlugControlEnabled.Checked = false;
-            _ = plugManager.TurnPlugOn();
+            try
+            {
+                _ = plugManager.TurnPlugOn();
+            }
+            catch (TapoAuthenticationException)
+            {
+                LblOnOff.Text = "AUTHENTICATION ERROR";
+                plugManager.UpdateNotifyIconText();
+            }
         }
 
         private void btnForceOff_Click(object sender, EventArgs e)
         {
             plugManager.DisablePlugControl();
             chkPlugControlEnabled.Checked = false;
-            _ = plugManager.TurnPlugOff();
+            try
+            {
+                _ = plugManager.TurnPlugOff();
+            }
+            catch (TapoAuthenticationException)
+            {
+                LblOnOff.Text = "AUTHENTICATION ERROR";
+                plugManager.UpdateNotifyIconText();
+            }
         }
 
         private void chkStartOnBoot_CheckedChanged(object sender, EventArgs e)
@@ -172,7 +188,6 @@ namespace TapoSmartBattery
 
         private void btnHelp_Click(object sender, EventArgs e)
         {
-            //MessageBox.Show("Test", "SmartTapoBattery Help", MessageBoxButtons.OK, MessageBoxIcon.Information);
             Help help = new Help();
             help.Show();
         }
@@ -245,15 +260,23 @@ namespace TapoSmartBattery
         {
             mainForm.LblBatPct.Text = "Battery Charge: ";
             mainForm.LblOnOff.Text = "Plug is: ";
-            mainForm.NotifyIcon.Text = "TapoSmartBattery:\n" + mainForm.LblBatPct.Text + "\n" + mainForm.LblOnOff.Text + "\n" + mainForm.LblChargeBetween.Text;
+            UpdateNotifyIconText();
             if (GotPlugSettings())
             {
-                using (TapoDevice plug = CreateTapoService(mainForm.CboPlugType.Text))
-                    isOn = await plug.GetOnOffStateAsync();
-                UpdateLabels();
+                try
+                {
+                    using (TapoDevice plug = CreateTapoService(mainForm.CboPlugType.Text))
+                        isOn = await plug.GetOnOffStateAsync();
+                    UpdateLabels();
 
-                poll.Elapsed += OnTimedEvent;
-                poll.AutoReset = true;
+                    poll.Elapsed += OnTimedEvent;
+                    poll.AutoReset = true;
+                }
+                catch (TapoAuthenticationException)
+                {
+                    mainForm.LblOnOff.Text = "AUTHENTICATION ERROR";
+                    UpdateNotifyIconText();
+                }
             }
         }
 
@@ -282,7 +305,7 @@ namespace TapoSmartBattery
                 poll.Enabled = false;
             mainForm.LblBatPct.Text = "Battery Charge: ";
             mainForm.LblOnOff.Text = "Plug is: ";
-            mainForm.NotifyIcon.Text = "TapoSmartBattery:\n" + mainForm.LblBatPct.Text + "\n" + mainForm.LblOnOff.Text + "\n" + mainForm.LblChargeBetween.Text;
+            UpdateNotifyIconText();
         }
 
         public void RestartTimerImmediate()
@@ -308,7 +331,7 @@ namespace TapoSmartBattery
             mainForm.LblBatPct.Text = "Battery Charge: " + (SystemInformation.PowerStatus.BatteryLifePercent * 100).ToString("0") + "%";
             if (!chargePctOnly)
                 mainForm.LblOnOff.Text = "Plug is: " + (isOn ? "On" : "Off") + (controlPlug ? " (automated)" : "");
-            mainForm.NotifyIcon.Text = "TapoSmartBattery:\n" + mainForm.LblBatPct.Text + "\n" + mainForm.LblOnOff.Text + "\n" + mainForm.LblChargeBetween.Text;
+            UpdateNotifyIconText();
         }
 
         private TapoDevice CreateTapoService(string tapoDeviceClassName)
@@ -355,20 +378,34 @@ namespace TapoSmartBattery
                 UpdateLabels(true);
         }
 
+        public void UpdateNotifyIconText()
+        {
+            mainForm.NotifyIcon.Text = "TapoSmartBattery:\n" + mainForm.LblBatPct.Text + "\n" + mainForm.LblOnOff.Text + "\n" + mainForm.LblChargeBetween.Text;
+        }
+
         private async void UpdateStatus()
         {
             UpdateLabels();
             if (controlPlug)
             {
-                if (SystemInformation.PowerStatus.BatteryLifePercent <= minPct)
+                try
                 {
-                    if (!isOn)
-                        await TurnPlugOn();
+                    if (SystemInformation.PowerStatus.BatteryLifePercent <= minPct)
+                    {
+                        if (!isOn)
+                            await TurnPlugOn();
+                    }
+                    else if (SystemInformation.PowerStatus.BatteryLifePercent >= maxPct)
+                    {
+                        if (isOn)
+                            await TurnPlugOff();
+                    }
                 }
-                else if (SystemInformation.PowerStatus.BatteryLifePercent >= maxPct)
+                catch (TapoAuthenticationException)
                 {
-                    if (isOn)
-                        await TurnPlugOff();
+                    mainForm.LblOnOff.Text = "AUTHENTICATION ERROR";
+                    mainForm.LblOnOff.Text = "Plug is: " + (isOn ? "On" : "Off") + (controlPlug ? " (automated)" : "");
+                    UpdateNotifyIconText();
                 }
             }
         }
