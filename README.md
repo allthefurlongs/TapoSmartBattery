@@ -14,8 +14,10 @@ Select the plug model from the drop down, and enter the IP address, and your Tap
 
 If you do not see a plug status (On or Off), you may have the wrong IP address, or a network error.
 
+## Download
+
+You can download from the [Releases](https://github.com/allthefurlongs/TapoSmartBattery/releases) section of the GitHub project. [V1.0.0.0 is here](https://github.com/allthefurlongs/TapoSmartBattery/releases/tag/v1.0.0.0).
+
 ## Building from Source
 
 The project was originally built in Visual Studio 2022 against .NET 8.0, and uses the NuGet package [Smdn.TPSmartHomeDevices.Tapo](https://github.com/smdn/Smdn.TPSmartHomeDevices/) version 2.0.0.
-
-Hoping to have a binary release soon.
