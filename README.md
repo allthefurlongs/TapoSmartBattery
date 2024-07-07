@@ -16,7 +16,7 @@ If you do not see a plug status (On or Off), you may have the wrong IP address, 
 
 ## Download
 
-You can download from the [Releases](https://github.com/allthefurlongs/TapoSmartBattery/releases) section of the GitHub project. [V1.0.1.0 is here](https://github.com/allthefurlongs/TapoSmartBattery/releases/tag/v1.0.1.0).
+You can download from the [Releases](https://github.com/allthefurlongs/TapoSmartBattery/releases) section of the GitHub project.
 
 ## Building from Source
 
