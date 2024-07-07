@@ -196,6 +196,7 @@ namespace TapoSmartBattery
     class PlugManager
     {
         private bool isOn = false;
+        private int plugStatusRefreshCounter = 0;
         public bool IsOn { get => isOn; }
 
         private double minPct = Properties.Settings.Default.MinPct / 100;
@@ -412,6 +413,14 @@ namespace TapoSmartBattery
 
         private void OnTimedEvent(object? source, ElapsedEventArgs e)
         {
+            if (plugStatusRefreshCounter >= 5)
+            {
+                // Less often, synchronize the plug on/off state. This helps if the machine is put to sleep and wakes up with the plug in a different state than expected.
+                SynchronizeOnOffState();
+                plugStatusRefreshCounter = 0;
+            }
+            else
+                plugStatusRefreshCounter++;
             UpdateStatus();
         }
     }
