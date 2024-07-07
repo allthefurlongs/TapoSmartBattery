@@ -17,6 +17,7 @@ namespace TapoSmartBattery
 
             txtMinCharge.Text = Properties.Settings.Default.MinPct.ToString();
             txtMaxCharge.Text = Properties.Settings.Default.MaxPct.ToString();
+            LblChargeBetween.Text = "Keep Charge At: " + txtMinCharge.Text + "% to " + txtMaxCharge.Text + "%";
             CboPlugType.Text = Properties.Settings.Default.PlugType;
             TxtIp.Text = Properties.Settings.Default.IP;
             TxtUsername.Text = Properties.Settings.Default.Username;
@@ -145,6 +146,17 @@ namespace TapoSmartBattery
             catch (TapoAuthenticationException)
             {
                 LblOnOff.Text = "AUTHENTICATION ERROR";
+            }
+            catch (HttpRequestException)
+            {
+                LblOnOff.Text = "COMMS ERROR";
+            }
+            catch (IOException)
+            {
+                LblOnOff.Text = "COMMS ERROR";
+            }
+            finally
+            {
                 plugManager.UpdateNotifyIconText();
             }
         }
@@ -160,6 +172,17 @@ namespace TapoSmartBattery
             catch (TapoAuthenticationException)
             {
                 LblOnOff.Text = "AUTHENTICATION ERROR";
+            }
+            catch (HttpRequestException)
+            {
+                LblOnOff.Text = "COMMS ERROR";
+            }
+            catch (IOException)
+            {
+                LblOnOff.Text = "COMMS ERROR";
+            }
+            finally
+            {
                 plugManager.UpdateNotifyIconText();
             }
         }
@@ -262,7 +285,6 @@ namespace TapoSmartBattery
         {
             mainForm.LblBatPct.Text = "Battery Charge: ";
             mainForm.LblOnOff.Text = "Plug is: ";
-            UpdateNotifyIconText();
             if (GotPlugSettings())
             {
                 try
@@ -274,9 +296,17 @@ namespace TapoSmartBattery
                 catch (TapoAuthenticationException)
                 {
                     mainForm.LblOnOff.Text = "AUTHENTICATION ERROR";
-                    UpdateNotifyIconText();
+                }
+                catch (HttpRequestException)
+                {
+                    mainForm.LblOnOff.Text = "COMMS ERROR";
+                }
+                catch (IOException)
+                {
+                    mainForm.LblOnOff.Text = "COMMS ERROR";
                 }
             }
+            UpdateNotifyIconText();
         }
 
         public void DisablePlugControl()
@@ -349,32 +379,70 @@ namespace TapoSmartBattery
 
         public async Task TurnPlugOn()
         {
-            if (GotPlugSettings())
+            try
             {
-                using (TapoDevice plug = CreateTapoService(mainForm.CboPlugType.Text))
+                if (GotPlugSettings())
                 {
-                    await plug.TurnOnAsync();
-                    isOn = await plug.GetOnOffStateAsync();
+                    using (TapoDevice plug = CreateTapoService(mainForm.CboPlugType.Text))
+                    {
+                        await plug.TurnOnAsync();
+                        isOn = await plug.GetOnOffStateAsync();
+                    }
+                    UpdateLabels();
                 }
-                UpdateLabels();
+                else
+                    UpdateLabels(true);
             }
-            else
-                UpdateLabels(true);
+            catch (TapoAuthenticationException)
+            {
+                mainForm.LblOnOff.Text = "AUTHENTICATION ERROR";
+            }
+            catch (HttpRequestException)
+            {
+                mainForm.LblOnOff.Text = "COMMS ERROR";
+            }
+            catch (IOException)
+            {
+                mainForm.LblOnOff.Text = "COMMS ERROR";
+            }
+            finally
+            {
+                UpdateNotifyIconText();
+            }
         }
 
         public async Task TurnPlugOff()
         {
-            if (GotPlugSettings())
+            try
             {
-                using (TapoDevice plug = CreateTapoService(mainForm.CboPlugType.Text))
+                if (GotPlugSettings())
                 {
-                    await plug.TurnOffAsync();
-                    isOn = await plug.GetOnOffStateAsync();
+                    using (TapoDevice plug = CreateTapoService(mainForm.CboPlugType.Text))
+                    {
+                        await plug.TurnOffAsync();
+                        isOn = await plug.GetOnOffStateAsync();
+                    }
+                    UpdateLabels();
                 }
-                UpdateLabels();
+                else
+                    UpdateLabels(true);
             }
-            else
-                UpdateLabels(true);
+            catch (TapoAuthenticationException)
+            {
+                mainForm.LblOnOff.Text = "AUTHENTICATION ERROR";
+            }
+            catch (HttpRequestException)
+            {
+                mainForm.LblOnOff.Text = "COMMS ERROR";
+            }
+            catch (IOException)
+            {
+                mainForm.LblOnOff.Text = "COMMS ERROR";
+            }
+            finally
+            {
+                UpdateNotifyIconText();
+            }
         }
 
         public void UpdateNotifyIconText()
@@ -404,6 +472,17 @@ namespace TapoSmartBattery
                 {
                     mainForm.LblOnOff.Text = "AUTHENTICATION ERROR";
                     mainForm.LblOnOff.Text = "Plug is: " + (isOn ? "On" : "Off") + (controlPlug ? " (automated)" : "");
+                }
+                catch (HttpRequestException)
+                {
+                    mainForm.LblOnOff.Text = "COMMS ERROR";
+                }
+                catch (IOException)
+                {
+                    mainForm.LblOnOff.Text = "COMMS ERROR";
+                }
+                finally
+                {
                     UpdateNotifyIconText();
                 }
             }

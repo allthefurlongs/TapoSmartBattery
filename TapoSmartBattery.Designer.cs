@@ -50,6 +50,7 @@ namespace TapoSmartBattery
             grpControl = new GroupBox();
             chkStartOnBoot = new CheckBox();
             grpPlugSettings = new GroupBox();
+            btnHelp = new Button();
             CboPlugType = new ComboBox();
             lblPlugType = new Label();
             TxtPassword = new TextBox();
@@ -64,7 +65,6 @@ namespace TapoSmartBattery
             NotifyIcon = new NotifyIcon(components);
             contextMenuStrip = new ContextMenuStrip(components);
             toolStripExit = new ToolStripMenuItem();
-            btnHelp = new Button();
             grpSetCharge.SuspendLayout();
             grpStatus.SuspendLayout();
             grpControl.SuspendLayout();
@@ -143,9 +143,9 @@ namespace TapoSmartBattery
             LblChargeBetween.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             LblChargeBetween.Location = new Point(6, 82);
             LblChargeBetween.Name = "LblChargeBetween";
-            LblChargeBetween.Size = new Size(198, 20);
+            LblChargeBetween.Size = new Size(116, 20);
             LblChargeBetween.TabIndex = 7;
-            LblChargeBetween.Text = "Keep Charge At: 45% to 55%";
+            LblChargeBetween.Text = "Keep Charge At:";
             // 
             // grpSetCharge
             // 
@@ -266,6 +266,16 @@ namespace TapoSmartBattery
             grpPlugSettings.TabIndex = 13;
             grpPlugSettings.TabStop = false;
             grpPlugSettings.Text = "Plug Settings";
+            // 
+            // btnHelp
+            // 
+            btnHelp.Location = new Point(280, 132);
+            btnHelp.Name = "btnHelp";
+            btnHelp.Size = new Size(75, 23);
+            btnHelp.TabIndex = 13;
+            btnHelp.Text = "Help";
+            btnHelp.UseVisualStyleBackColor = true;
+            btnHelp.Click += btnHelp_Click;
             // 
             // CboPlugType
             // 
@@ -389,16 +399,6 @@ namespace TapoSmartBattery
             toolStripExit.Size = new Size(93, 22);
             toolStripExit.Text = "Exit";
             toolStripExit.Click += toolStripExit_Click;
-            // 
-            // btnHelp
-            // 
-            btnHelp.Location = new Point(280, 132);
-            btnHelp.Name = "btnHelp";
-            btnHelp.Size = new Size(75, 23);
-            btnHelp.TabIndex = 13;
-            btnHelp.Text = "Help";
-            btnHelp.UseVisualStyleBackColor = true;
-            btnHelp.Click += btnHelp_Click;
             // 
             // TapoSmartBatteryForm
             // 
