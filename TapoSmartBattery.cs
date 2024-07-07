@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using Smdn.TPSmartHomeDevices.Tapo;
-using System.Timers;
 using Microsoft.Win32;
 
 namespace TapoSmartBattery
@@ -213,13 +212,15 @@ namespace TapoSmartBattery
         }
 
         private TapoSmartBatteryForm mainForm;
-        private System.Timers.Timer poll = new System.Timers.Timer(10000);
+        private System.Windows.Forms.Timer poll = new System.Windows.Forms.Timer();
         private bool controlPlug;
 
         public PlugManager(TapoSmartBatteryForm mainForm)
         {
             this.mainForm = mainForm;
             controlPlug = mainForm.chkPlugControlEnabled.Checked;
+            poll.Tick += new EventHandler(PollEvent);
+            poll.Interval = 10000;
         }
 
         public static bool IsSetToStartOnBoot()
@@ -269,9 +270,6 @@ namespace TapoSmartBattery
                     using (TapoDevice plug = CreateTapoService(mainForm.CboPlugType.Text))
                         isOn = await plug.GetOnOffStateAsync();
                     UpdateLabels();
-
-                    poll.Elapsed += OnTimedEvent;
-                    poll.AutoReset = true;
                 }
                 catch (TapoAuthenticationException)
                 {
@@ -296,14 +294,14 @@ namespace TapoSmartBattery
         public void Start()
         {
             SynchronizeOnOffState();
-            if (!poll.Enabled)
-                poll.Enabled = true;
+            if (GotPlugSettings() && !poll.Enabled)
+                poll.Start();
         }
 
         public void Stop()
         {
             if (poll.Enabled)
-                poll.Enabled = false;
+                poll.Stop();
             mainForm.LblBatPct.Text = "Battery Charge: ";
             mainForm.LblOnOff.Text = "Plug is: ";
             UpdateNotifyIconText();
@@ -411,8 +409,9 @@ namespace TapoSmartBattery
             }
         }
 
-        private void OnTimedEvent(object? source, ElapsedEventArgs e)
+        private void PollEvent(object? eventObj, EventArgs eventArgs)
         {
+            poll.Stop();
             if (plugStatusRefreshCounter >= 5)
             {
                 // Less often, synchronize the plug on/off state. This helps if the machine is put to sleep and wakes up with the plug in a different state than expected.
@@ -422,6 +421,7 @@ namespace TapoSmartBattery
             else
                 plugStatusRefreshCounter++;
             UpdateStatus();
+            poll.Start();
         }
     }
 }
