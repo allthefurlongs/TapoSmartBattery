@@ -7,6 +7,7 @@ namespace TapoSmartBattery
     public partial class TapoSmartBatteryForm : Form
     {
         private PlugManager plugManager;
+        private bool quitFromSystemShutdown = false;
 
         public TapoSmartBatteryForm()
         {
@@ -48,11 +49,25 @@ namespace TapoSmartBattery
             }
         }
 
+        protected override void WndProc(ref Message m)
+        {
+            // Intercept WM_QUERYENDSESSION events which happen when the machine shutsdown/reboots, and set a flag that allows the application to terminate without the usual user confirmation popup
+            if (m.Msg == 0x11)  // WM_QUERYENDSESSION
+            {
+                quitFromSystemShutdown = true;
+                Close();
+            };
+            base.WndProc(ref m);
+        }
+
         private void TapoSmartBatteryForm_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
         {
-            DialogResult msgResult = MessageBox.Show("Are you sure you want to exit?", "TapoSmartBattery", MessageBoxButtons.YesNo);
-            if (msgResult == DialogResult.No)
-                e.Cancel = true;
+            if (!quitFromSystemShutdown)
+            {
+                DialogResult msgResult = MessageBox.Show("Are you sure you want to exit?", "TapoSmartBattery", MessageBoxButtons.YesNo);
+                if (msgResult == DialogResult.No)
+                    e.Cancel = true;
+            }
         }
 
         private void NotifyIcon_MouseClick(object sender, MouseEventArgs e)
