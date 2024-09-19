@@ -476,7 +476,7 @@ namespace TapoSmartBattery
         private async void UpdateStatus()
         {
             if (!isOn && batteryPctAtLastAutomatedOff != -1 && SystemInformation.PowerStatus.BatteryLifePercent  > batteryPctAtLastAutomatedOff)
-                MessageBox.Show("The plug was automatically turned off, but the battery percentage keeps rising anyway. You may need to check if the relay is stuck in the plug, preventing it from physically turning the power off.", "Is Plug Relay Stuck?",
+                MessageBox.Show("The plug was automatically turned off, but the battery percentage keeps rising anyway.\n\nYou may need to check if the relay is stuck in the plug, preventing it from physically turning the power off.", "TapoSmartPlug - Stuck Relay?",
                                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
             UpdateLabels();
             if (controlPlug)
