@@ -233,6 +233,7 @@ namespace TapoSmartBattery
     class PlugManager
     {
         private bool isOn = false;
+        private double batteryPctAtLastAutomatedOff = -1;
         private int plugStatusRefreshCounter = 0;
         public bool IsOn { get => isOn; }
 
@@ -304,8 +305,13 @@ namespace TapoSmartBattery
             {
                 try
                 {
+                    bool previousIsOn = isOn;
                     using (TapoDevice plug = CreateTapoService(mainForm.CboPlugType.Text))
                         isOn = await plug.GetOnOffStateAsync();
+                    if (isOn && isOn != previousIsOn)
+                        batteryPctAtLastAutomatedOff = -1;
+                    else if (!isOn && isOn != previousIsOn && controlPlug)
+                        batteryPctAtLastAutomatedOff = SystemInformation.PowerStatus.BatteryLifePercent;
                     UpdateLabels();
                 }
                 catch (TapoAuthenticationException)
@@ -326,12 +332,14 @@ namespace TapoSmartBattery
 
         public void DisablePlugControl()
         {
+            batteryPctAtLastAutomatedOff = -1;
             controlPlug = false;
             RestartTimerImmediate();
         }
 
         public void EnablePlugControl()
         {
+            batteryPctAtLastAutomatedOff = -1;
             controlPlug = true;
             RestartTimerImmediate();
         }
@@ -467,6 +475,9 @@ namespace TapoSmartBattery
 
         private async void UpdateStatus()
         {
+            if (!isOn && batteryPctAtLastAutomatedOff != -1 && SystemInformation.PowerStatus.BatteryLifePercent  > batteryPctAtLastAutomatedOff)
+                MessageBox.Show("The plug was automatically turned off, but the battery percentage keeps rising anyway. You may need to check if the relay is stuck in the plug, preventing it from physically turning the power off.", "Is Plug Relay Stuck?",
+                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
             UpdateLabels();
             if (controlPlug)
             {
@@ -476,11 +487,15 @@ namespace TapoSmartBattery
                     {
                         if (!isOn)
                             await TurnPlugOn();
+                        if (isOn)
+                            batteryPctAtLastAutomatedOff = -1;
                     }
                     else if (SystemInformation.PowerStatus.BatteryLifePercent >= maxPct)
                     {
                         if (isOn)
                             await TurnPlugOff();
+                        if (!isOn)
+                            batteryPctAtLastAutomatedOff = SystemInformation.PowerStatus.BatteryLifePercent;
                     }
                 }
                 catch (TapoAuthenticationException)
